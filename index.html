@@ -3,214 +3,242 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EarthLive.TV – Random Camera Button Demo</title>
+  <title>EarthLive.TV – Take Me Anywhere Button</title>
+
   <style>
     :root{
-      --bg:#0b1220;
-      --btn:#111b2e;
-      --btn2:#0f1a2d;
-      --stroke:rgba(255,255,255,.14);
-      --text:#eaf0ff;
-      --muted:rgba(234,240,255,.75);
-      --glow:rgba(70,140,255,.22);
-      --glow2:rgba(255,255,255,.06);
-      --pip:#ff3b30;
+      --btn-radius: 22px;
+      --btn-h: 64px;
+      --pad-x: 18px;
+
+      --blue-1:#6aa6ff;
+      --blue-2:#2f6bff;
+
+      --stroke:#0a193c;      /* dark navy “stroke” */
+      --glow: rgba(61,140,255,.35);
+      --glow-hover: rgba(61,140,255,.55);
+
+      --corner: rgba(255,255,255,.92);
+      --corner-w: 2px;
+      --corner-l: 16px;      /* corner bracket length */
+      --corner-r: 10px;      /* rounded corner radius for the bracket */
     }
-    *{box-sizing:border-box}
+
+    /* Demo background only (remove on your site) */
     body{
       margin:0;
       min-height:100vh;
       display:grid;
       place-items:center;
-      background:radial-gradient(1200px 800px at 50% 20%, rgba(70,140,255,.10), transparent 60%),
-                 radial-gradient(900px 650px at 25% 85%, rgba(255,255,255,.05), transparent 55%),
-                 var(--bg);
-      color:var(--text);
-      font: 15px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      padding:24px;
+      background: radial-gradient(1200px 500px at 50% 35%, #1a2a3a 0%, #0c141d 50%, #060b10 100%);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     }
 
-    .wrap{
-      width:min(520px,100%);
-      display:grid;
-      gap:14px;
-      justify-items:center;
-      text-align:center;
-    }
-    .hint{
-      color:var(--muted);
-      font-size:13px;
+    .ctaWrap{
+      display:flex;
+      justify-content:center;
+      padding: 24px;
     }
 
-    /* Button */
-    .random-btn{
-      --padY:14px;
-      --padX:18px;
+    .ctaBtn{
+      position: relative;
       display:inline-flex;
       align-items:center;
-      justify-content:center;
-      gap:12px;
-      padding:var(--padY) var(--padX);
-      min-width:min(360px, 100%);
-      border-radius:16px;
-      border:1px solid var(--stroke);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
-        radial-gradient(80% 140% at 50% 0%, rgba(70,140,255,.16), transparent 60%),
-        linear-gradient(180deg, var(--btn), var(--btn2));
-      color:var(--text);
-      cursor:pointer;
+      gap: 12px;
+      height: var(--btn-h);
+      padding: 0 var(--pad-x);
+      border-radius: var(--btn-radius);
+      background: linear-gradient(135deg, var(--blue-1) 0%, var(--blue-2) 100%);
+      box-shadow:
+        0 10px 26px var(--glow),
+        0 2px 0 rgba(255,255,255,.25) inset;
+      text-decoration:none;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
-      box-shadow:
-        0 10px 30px rgba(0,0,0,.35),
-        0 0 0 0 rgba(70,140,255,0);
       transform: translateZ(0);
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
-      position:relative;
+      transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+    }
+
+    /* Slight expand on hover/focus */
+    .ctaBtn:hover,
+    .ctaBtn:focus-visible{
+      transform: scale(1.03);
+      box-shadow:
+        0 14px 34px var(--glow-hover),
+        0 2px 0 rgba(255,255,255,.28) inset;
+      filter: brightness(1.04);
+      outline: none;
+      cursor:pointer;
+    }
+
+    /* Globe icon (use your own transparent PNG/SVG if preferred) */
+    .globe{
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 40%),
+        radial-gradient(circle at 35% 30%, #7be0ff 0%, #1f6fff 55%, #1240b8 100%);
+      box-shadow:
+        0 0 0 2px rgba(255,255,255,.28),
+        0 10px 18px rgba(0,0,0,.25);
       overflow:hidden;
+      position:relative;
+
+      /* slow spin by default */
+      animation: spin 6s linear infinite;
     }
 
-    /* Subtle “breathing” glow so it doesn't look lonely */
-    .random-btn::after{
+    /* fake “continents” overlay for demo (replace with real icon if you like) */
+    .globe::before{
       content:"";
-      position:absolute;
-      inset:-40%;
-      background: radial-gradient(circle at 50% 30%, var(--glow), transparent 55%);
-      opacity:.35;
-      filter: blur(18px);
-      animation: breathe 3.6s ease-in-out infinite;
-      pointer-events:none;
-    }
-    @keyframes breathe{
-      0%, 75%, 100% { transform: scale(.95); opacity:.25; }
-      35% { transform: scale(1.05); opacity:.45; }
+      position:absolute; inset:-8px;
+      background:
+        radial-gradient(circle at 45% 55%, rgba(70,255,160,.95) 0 10px, transparent 11px),
+        radial-gradient(circle at 62% 42%, rgba(70,255,160,.95) 0 9px, transparent 10px),
+        radial-gradient(circle at 38% 38%, rgba(70,255,160,.95) 0 8px, transparent 9px),
+        radial-gradient(circle at 56% 62%, rgba(70,255,160,.95) 0 7px, transparent 8px);
+      filter: blur(.2px);
+      opacity:.9;
+      transform: rotate(18deg);
     }
 
-    .random-btn:hover{
-      transform: scale(1.04);
-      border-color: rgba(255,255,255,.24);
-      box-shadow:
-        0 14px 38px rgba(0,0,0,.42),
-        0 0 0 6px rgba(70,140,255,.12);
-    }
-    .random-btn:active{
-      transform: scale(1.01);
-      box-shadow:
-        0 10px 26px rgba(0,0,0,.35),
-        0 0 0 5px rgba(70,140,255,.10);
-    }
-    .random-btn:focus-visible{
-      outline:none;
-      box-shadow:
-        0 14px 38px rgba(0,0,0,.42),
-        0 0 0 4px rgba(255,255,255,.18),
-        0 0 0 8px rgba(70,140,255,.18);
-      border-color: rgba(255,255,255,.30);
+    /* Speed up globe on hover/focus */
+    .ctaBtn:hover .globe,
+    .ctaBtn:focus-visible .globe{
+      animation-duration: 1.2s;
+      filter: brightness(1.06);
     }
 
-    /* Label */
+    @keyframes spin{
+      to{ transform: rotate(360deg); }
+    }
+
     .label{
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      font-weight:800;
-      font-size:14px;
-      line-height:1;
-      position:relative;
-      z-index:1; /* above ::after glow */
-      white-space:nowrap;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      color:#fff;
+      font-weight: 800;
+      font-size: 26px;
+      line-height: 1;
+      letter-spacing: 0.03em;
+
+      /* “stroke” using multi-shadow (cross-browser) */
+      text-shadow:
+        -1px 0 var(--stroke),
+         1px 0 var(--stroke),
+         0 -1px var(--stroke),
+         0  1px var(--stroke),
+         0  2px 10px rgba(0,0,0,.22);
+      white-space: nowrap;
     }
 
-    /* Dice */
-    .dice{
-      width:26px;
-      height:26px;
-      flex:0 0 26px;
-      position:relative;
-      z-index:1; /* above ::after glow */
-      filter: drop-shadow(0 6px 14px rgba(0,0,0,.30));
-      transform-origin: 50% 60%;
-      animation: diceIdle 3.4s infinite;
+    .arrow{
+      display:inline-block;
+      font-weight: 900;
+      margin-left: 2px;
+      transition: transform 180ms ease, filter 180ms ease;
+      filter: brightness(1);
     }
 
-    /* Dice shakes briefly once every cycle (rest of time still) */
-    @keyframes diceIdle{
-      0%, 78%, 100% { transform: rotate(0deg) translateY(0); }
-      80% { transform: rotate(-10deg) translateY(-1px); }
-      82% { transform: rotate(10deg) translateY(0); }
-      84% { transform: rotate(-8deg) translateY(-1px); }
-      86% { transform: rotate(8deg) translateY(0); }
-      88% { transform: rotate(0deg) translateY(0); }
+    /* Arrow nudges right on hover/focus (no color change) */
+    .ctaBtn:hover .arrow,
+    .ctaBtn:focus-visible .arrow{
+      transform: translateX(7px);
+      filter: brightness(1.12);
     }
 
-    /* Stronger shake on hover / focus / active */
-    .random-btn:hover .dice,
-    .random-btn:focus-visible .dice,
-    .random-btn:active .dice{
-      animation: diceShake .38s ease-in-out 1;
-    }
-    @keyframes diceShake{
-      0% { transform: rotate(0deg) translateY(0); }
-      20% { transform: rotate(-14deg) translateY(-1px); }
-      40% { transform: rotate(14deg) translateY(0); }
-      60% { transform: rotate(-10deg) translateY(-1px); }
-      80% { transform: rotate(10deg) translateY(0); }
-      100% { transform: rotate(0deg) translateY(0); }
+    /* Rounded corner brackets (no inner border) */
+    .corner{
+      position:absolute;
+      width: var(--corner-l);
+      height: var(--corner-l);
+      pointer-events:none;
+      opacity:.95;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.18));
+      transition: opacity 180ms ease, transform 180ms ease;
     }
 
-    /* Mobile sizing */
-    @media (max-width: 420px){
-      .random-btn{ min-width:100%; }
-      .label{ font-size:13px; }
-      .dice{ width:24px; height:24px; flex-basis:24px; }
+    /* TL */
+    .corner.tl{
+      top: 10px; left: 10px;
+      border-top: var(--corner-w) solid var(--corner);
+      border-left: var(--corner-w) solid var(--corner);
+      border-top-left-radius: var(--corner-r);
+    }
+    /* TR */
+    .corner.tr{
+      top: 10px; right: 10px;
+      border-top: var(--corner-w) solid var(--corner);
+      border-right: var(--corner-w) solid var(--corner);
+      border-top-right-radius: var(--corner-r);
+    }
+    /* BL */
+    .corner.bl{
+      bottom: 10px; left: 10px;
+      border-bottom: var(--corner-w) solid var(--corner);
+      border-left: var(--corner-w) solid var(--corner);
+      border-bottom-left-radius: var(--corner-r);
+    }
+    /* BR */
+    .corner.br{
+      bottom: 10px; right: 10px;
+      border-bottom: var(--corner-w) solid var(--corner);
+      border-right: var(--corner-w) solid var(--corner);
+      border-bottom-right-radius: var(--corner-r);
     }
 
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      .random-btn, .random-btn::after, .dice{ animation:none !important; transition:none !important; }
+    /* Slight “energize” on hover */
+    .ctaBtn:hover .corner,
+    .ctaBtn:focus-visible .corner{
+      opacity: 1;
+      transform: scale(1.03);
+    }
+
+    /* Mobile-thin sizing (keeps ad visible) */
+    @media (max-width: 480px){
+      :root{
+        --btn-h: 54px;
+        --pad-x: 14px;
+      }
+      .label{ font-size: 20px; }
+      .globe{ width: 38px; height: 38px; }
+      .corner{ width: 14px; height: 14px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="hint">Demo – drop this button into EarthLive.TV anywhere.</div>
+  <div class="ctaWrap">
+    <!-- Replace href with your random camera route -->
+    <a class="ctaBtn" href="#" aria-label="Take Me Anywhere">
+      <!-- corner brackets -->
+      <span class="corner tl" aria-hidden="true"></span>
+      <span class="corner tr" aria-hidden="true"></span>
+      <span class="corner bl" aria-hidden="true"></span>
+      <span class="corner br" aria-hidden="true"></span>
 
-    <button class="random-btn" id="randomBtn" type="button" aria-label="Random camera">
-      <!-- Inline SVG dice (scales crisply, no images) -->
-      <svg class="dice" viewBox="0 0 48 48" role="img" aria-hidden="true">
-        <!-- Dice body -->
-        <defs>
-          <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="rgba(255,255,255,.20)"/>
-            <stop offset="1" stop-color="rgba(255,255,255,.06)"/>
-          </linearGradient>
-        </defs>
-        <rect x="7" y="7" width="34" height="34" rx="8" fill="url(#g)" stroke="rgba(255,255,255,.26)" />
-        <!-- Subtle face shading -->
-        <path d="M12 14c3-4 21-4 24 0 2 3 2 17 0 20-3 4-21 4-24 0-2-3-2-17 0-20Z"
-              fill="rgba(70,140,255,.10)" opacity=".9"/>
-        <!-- Pips (5) -->
-        <circle cx="17" cy="17" r="2.7" fill="var(--pip)"/>
-        <circle cx="31" cy="17" r="2.7" fill="var(--pip)"/>
-        <circle cx="24" cy="24" r="2.7" fill="var(--pip)"/>
-        <circle cx="17" cy="31" r="2.7" fill="var(--pip)"/>
-        <circle cx="31" cy="31" r="2.7" fill="var(--pip)"/>
-      </svg>
-
-      <span class="label">Random Camera</span>
-    </button>
-
-    <div class="hint">Hover/tap to “roll” • Auto-roll every ~3–4 seconds • HTML/CSS only (JS below is optional)</div>
+      <!-- globe + text -->
+      <span class="globe" aria-hidden="true"></span>
+      <span class="label">
+        Take&nbsp;Me&nbsp;Anywhere <span class="arrow" aria-hidden="true">›</span>
+      </span>
+    </a>
   </div>
 
   <script>
-    // OPTIONAL: replace with your real random-camera route.
-    // Keep/remove this script — animation does NOT depend on JS.
-    document.getElementById('randomBtn').addEventListener('click', () => {
-      // Example: redirect to your random endpoint
-      // window.location.href = "/random";
-      alert("Hook this up to your random camera URL (e.g. /random).");
+    // Optional: add a "pressed" micro-feedback on click (no navigation change here)
+    document.querySelector('.ctaBtn')?.addEventListener('pointerdown', (e) => {
+      e.currentTarget.style.transform = 'scale(0.99)';
+    });
+    document.querySelector('.ctaBtn')?.addEventListener('pointerup', (e) => {
+      e.currentTarget.style.transform = '';
+    });
+    document.querySelector('.ctaBtn')?.addEventListener('pointerleave', (e) => {
+      e.currentTarget.style.transform = '';
     });
   </script>
 </body>
